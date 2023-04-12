@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Modal, TouchableOpacity } from 'react-native';
-// import CheckBox from '@react-native-community/checkbox';
+import { StyleSheet, Text, View, TextInput, Modal, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView, SafeAreaView } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 
 export default function App() {
 
-
-
   const todayDate = new Date();
   const startDate = getFormatedDate(todayDate.setDate(todayDate.getDate()), 'YYYY/MM/DD');
 
   const [date, setDate] = useState();
-  const [time, setTime] = useState();
+  const [time, setTime] = useState('00:00');
   const [text, setText] = useState('');
   const [completed, setCompleted] = useState(false);
   const [openDateTimeModal, setOpenDateTimeModal] = useState(false);
@@ -36,8 +33,11 @@ export default function App() {
     setText(newText);
   }
 
-  const handleCompletion = (id) => {
-    setCompleted(!completed)
+  const completeReminder = (id) => {
+    let copyList = list.slice();
+    let index = copyList.findIndex(x => x.id === id);
+    copyList[index].completed = !list[index].completed;
+    setList(copyList);
   }
 
   const saveReminder = () => {
@@ -80,108 +80,174 @@ export default function App() {
     //set the list of remminders and reset all values of the reminder
     setList(copyList)
     setDate()
-    setTime()
+    setTime('00:00')
     setText('')
   }
 
   return (
-    <View style= {styles.container}>
-      <View style= {styles.title}>
-        <Text>
-          Reminder App
-        </Text>
-      </View>
-
-      <View style= {styles.userInput}>
-        <Text>Reminder: </Text>
-
-        <TextInput
-          style= {[styles.input, styles.reminder]}
-          onChangeText = {handleChangeText}
-          value= {text}
-        />
-
-        <View style= {styles.buttonRow}>
-          <TouchableOpacity onPress= {handleOpenDateTimeModal} style= {styles.button}>
-            <Text>Select Date and Time</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress= {saveReminder} style= {(!date || !time || !text) ? styles.buttonDisabled : styles.button} disabled= {!date || !time || !text}>
-            <Text>Submit</Text>
-          </TouchableOpacity>
+    <SafeAreaView style= {styles.container}>
+      <ScrollView>
+        <View style= {styles.title}>
+          <Text style= {styles.appTitle}>
+            reminder
+          </Text>
         </View>
-      </View>
 
+        <View style= {styles.userInput}>
+          <View style= {date && time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
+            <Text>date/time:</Text>
+            {date && time ? <Text style= {styles.dateTime}>{date} {time}</Text> : null}
 
-      <Modal
-      animationType= 'slide'
-      transparent= 'true'
-      visible= {openDateTimeModal}>
-        <View style= {styles.centerView}>
-          <View style= {styles.modalView}>
-          <DatePicker
-            mode= 'datepicker'
-            selected= {date}
-            minimumDate= {startDate}
-            onDateChange= {handleChangeDate}
-            onTimeChange = {handleChangeTime}
-          />
-            <TouchableOpacity onPress= {handleOpenDateTimeModal} style= {(date && time) ? styles.button : null}>
-              {date && time && <Text>Select</Text>}
+            <TouchableOpacity onPress= {handleOpenDateTimeModal} style= {styles.button}>
+                <Text>Choose</Text>
+            </TouchableOpacity>
+          </View>
+          <View style= {styles.centerContainer}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+              <TextInput
+                style= {[styles.input]}
+                onChangeText = {handleChangeText}
+                value= {text}
+                placeholder= 'Title'
+              />
+            </TouchableWithoutFeedback>
+          </View>
+
+          <View style= {styles.centerContainer}>
+            <TouchableOpacity onPress= {saveReminder} style= {(!date || !time || !text) ? styles.buttonDisabled : styles.button} disabled= {!date || !time || !text}>
+              <Text>Submit</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
 
-
-      <View style= {styles.reminderList}>
-        {list.map((item) =>
-          <View style= {styles.reminderLayout} key= {item.id}>
-            <Checkbox
-              value= {item.completed}
-              onValueChange= {() => !item.completed}
-              style= {styles.checkbox}
+        <Modal
+        style= {styles.modalContainer}
+        animationType= 'slide'
+        transparent= 'true'
+        visible= {openDateTimeModal}>
+          <View style= {styles.centerView}>
+            <View style= {styles.modalView}>
+            <DatePicker
+              mode= 'datepicker'
+              selected= {date}
+              minimumDate= {startDate}
+              onDateChange= {handleChangeDate}
+              onTimeChange = {handleChangeTime}
             />
-            <View >
-              <Text>{item.date} @ {item.time}</Text>
-              <Text>{item.text} {item.id}</Text>
-
+              <TouchableOpacity onPress= {handleOpenDateTimeModal} style= {(date && time) ? styles.button : null}>
+                {date && time && <Text>Select</Text>}
+              </TouchableOpacity>
             </View>
           </View>
-        )}
-      </View>
+        </Modal>
 
-      <StatusBar style="auto" />
-    </View>
+
+        <View style= {styles.reminderListContainer}>
+          <View style= {styles.reminderListTitleContainer}>
+            <Text>here are your reminders:</Text>
+          </View>
+          <View style= {styles.reminderList}>
+            {list.map((item) =>
+              <TouchableOpacity style= {item.completed ? styles.reminderCardCompleted : styles.reminderCardIncomplete} key= {item.id} onPress= {() => completeReminder(item.id)}>
+                <Checkbox
+                  value= {item.completed}
+                  onValueChange= {() => completeReminder(item.id)}
+                  style= {styles.checkbox}
+                  color= 'green'
+                />
+                <View >
+                  <Text style= {styles.reminderDateTime}>{item.date} @ {item.time}</Text>
+                  <Text style= {styles.reminderText}>{item.text}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        <StatusBar style="auto" />
+      </ScrollView>
+    </SafeAreaView>
 
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    // justifyContent: 'center',
     width: '100%',
     height: '100%',
-    borderWidth: 2,
-    borderColor: 'red',
   },
 
   title: {
-    flex: 1,
-    marginTop: 70,
+    flex: 2,
+    marginTop: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  appTitle: {
+    fontSize: 80,
   },
 
   userInput: {
     flex: 2,
     marginTop: 20,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+
+  dateTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  },
+
+  dateTimeContainerMissing: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  },
+
+  dateTime: {
+    borderColor: 'black',
+    borderWidth: 1,
+    width: 150,
+    height: 40,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  reminderListContainer: {
+    flex: 5,
+    marginTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    width: '100%',
+  },
+
+  reminderListTitleContainer: {
+    width: '100%',
   },
 
   reminderList: {
-    flex: 5,
-    marginTop: 20,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContainer: {
+    height: '90%',
+  },
+
+  centerContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: 10,
   },
 
   input: {
@@ -190,9 +256,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
-  },
-
-  reminder: {
     width: 240,
   },
 
@@ -213,20 +276,44 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    margin: 20,
     borderWidth: 1,
     padding: 5,
     borderRadius: 5,
   },
 
-  reminderLayout: {
+  reminderCardCompleted: {
     flexDirection: 'row',
     columnGap: 10,
-    marginBottom: 20,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'green',
+    backgroundColor: 'lightgreen',
+    width: 300,
+    padding: 10,
+    borderRadius: 8,
   },
 
-  checkbox: {
+  reminderCardIncomplete: {
+    flexDirection: 'row',
+    columnGap: 10,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: 'red',
+    backgroundColor: 'pink',
+    width: 300,
+    padding: 10,
+    borderRadius: 8,
+  },
 
+  reminderDateTime: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginBottom: 5,
+  },
+
+  reminderText: {
+    fontSize: 18,
+    paddingRight: 30,
   },
 
   buttonRow: {
@@ -235,15 +322,10 @@ const styles = StyleSheet.create({
   },
 
   buttonDisabled: {
-    margin: 20,
     borderWidth: 1,
     padding: 5,
     borderRadius: 5,
-    backgroundColor: 'grey',
-
+    backgroundColor: 'lightgrey',
+    opacity: 0.5
   }
 });
-
-// {date && time && text && <TouchableOpacity onPress= {saveReminder} style= {styles.button}>
-//         <Text>Save</Text>
-//       </TouchableOpacity>}
