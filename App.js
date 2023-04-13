@@ -4,6 +4,10 @@ import { StyleSheet, Text, View, TextInput, Modal, TouchableOpacity, TouchableWi
 import Checkbox from 'expo-checkbox';
 import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 
+import AppTitle from './components/AppTitle.jsx';
+import GetDate from './components/GetDate.jsx';
+import GetTime from './components/GetTime.jsx';
+
 export default function App() {
 
   const todayDate = new Date();
@@ -97,43 +101,16 @@ export default function App() {
   return (
     <SafeAreaView style= {styles.container}>
       <ScrollView>
-        <View style= {styles.title}>
-          <Text style= {styles.appTitle}>
-            reminder
-          </Text>
-        </View>
+        <AppTitle />
+
 
         <View style= {styles.userInput}>
-          <View style= {date ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
-            <Text>date:</Text>
-            {date ?
-              <View style= {styles.dateTime}>
-                <Text >{date}</Text>
-              </View> :
-              <View style={styles.dateTimeMissing}>
-                <Text></Text>
-              </View>
-            }
-            <TouchableOpacity onPress= {handleOpenDateModal} style= {styles.button}>
-                <Text>Choose</Text>
-            </TouchableOpacity>
-          </View>
+          <GetDate date= {date} handleOpenDateModal= {handleOpenDateModal} />
+          <GetTime time= {time} handleOpenTimeModal= {handleOpenTimeModal} />
 
-          <View style= {time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
-            <Text>time:</Text>
-            {time ?
-              <View style= {styles.dateTime}>
-                <Text >{time}</Text>
-              </View> :
-              <View style={styles.dateTimeMissing}>
-                <Text></Text>
-              </View>
-            }
 
-            <TouchableOpacity onPress= {handleOpenTimeModal} style= {styles.button}>
-                <Text>Choose</Text>
-            </TouchableOpacity>
-          </View>
+
+
           <View style= {styles.centerContainer}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
               <TextInput
@@ -176,12 +153,7 @@ export default function App() {
                     </TouchableOpacity> :
                     <Text style= {styles.buttonDisabled}>Select</Text>
                     }
-
                 </View>
-
-
-
-
             </View>
           </View>
         </Modal>
@@ -237,17 +209,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-  },
-
-  title: {
-    flex: 2,
-    marginTop: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  appTitle: {
-    fontSize: 80,
   },
 
   userInput: {
@@ -401,3 +362,36 @@ const styles = StyleSheet.create({
     opacity: 0.5
   }
 });
+
+
+// <View style= {date ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
+//             <Text>date:</Text>
+//             {date ?
+//               <View style= {styles.dateTime}>
+//                 <Text >{date}</Text>
+//               </View> :
+//               <View style={styles.dateTimeMissing}>
+//                 <Text></Text>
+//               </View>
+//             }
+//             <TouchableOpacity onPress= {handleOpenDateModal} style= {styles.button}>
+//                 <Text>Choose</Text>
+//             </TouchableOpacity>
+//           </View>
+
+
+{/* <View style= {time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
+            <Text>time:</Text>
+            {time ?
+              <View style= {styles.dateTime}>
+                <Text >{time}</Text>
+              </View> :
+              <View style={styles.dateTimeMissing}>
+                <Text></Text>
+              </View>
+            }
+
+            <TouchableOpacity onPress= {handleOpenTimeModal} style= {styles.button}>
+                <Text>Choose</Text>
+            </TouchableOpacity>
+          </View> */}
