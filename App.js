@@ -137,10 +137,10 @@ export default function App() {
           <View style= {styles.centerContainer}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
               <TextInput
-                style= {[styles.input]}
+                style= {styles.input}
                 onChangeText = {handleChangeText}
                 value= {text}
-                placeholder= 'Title'
+                placeholder= 'what are you going to forget?'
               />
             </TouchableWithoutFeedback>
           </View>
@@ -165,9 +165,19 @@ export default function App() {
               minimumDate= {startDate}
               onDateChange= {handleChangeDate}
             />
-              <TouchableOpacity onPress= {handleOpenDateModal} style= {(date && time) ? styles.button : null}>
-                {date && <Text>Select</Text>}
-              </TouchableOpacity>
+
+                <View style= {styles.buttonRow}>
+                  <TouchableOpacity >
+                    <Text style= {styles.button} onPress= {handleOpenDateModal}>Back</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity >
+                    <Text style= {date ? styles.button : styles.buttonDisabled} onPress= {date && handleOpenDateModal}>Select</Text>
+                  </TouchableOpacity>
+                </View>
+
+
+
+
             </View>
           </View>
         </Modal>
@@ -199,7 +209,7 @@ export default function App() {
                   value= {item.completed}
                   onValueChange= {() => completeReminder(item.id)}
                   style= {styles.checkbox}
-                  color= 'green'
+                  color= {item.completed ? 'green' : 'red'}
                 />
                 <View >
                   <Text style= {styles.reminderDateTime}>{item.date} @ {item.time}</Text>
@@ -244,8 +254,6 @@ const styles = StyleSheet.create({
   },
 
   dateTimeContainer: {
-    // borderColor: 'black',
-    // borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -254,8 +262,6 @@ const styles = StyleSheet.create({
   },
 
   dateTimeContainerMissing: {
-    // borderColor: 'black',
-    // borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -264,8 +270,6 @@ const styles = StyleSheet.create({
   },
 
   dateTime: {
-    // borderColor: 'red',
-    // borderWidth: 1,
     width: 70,
     height: 40,
     borderRadius: 5,
@@ -276,8 +280,6 @@ const styles = StyleSheet.create({
   },
 
   dateTimeMissing: {
-    // borderColor: 'red',
-    // borderWidth: 1,
     width: 70,
     height: 40,
     borderRadius: 5,
@@ -313,12 +315,11 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 5,
   },
 
   input: {
     height: 40,
-    margin: 12,
     borderWidth: 1,
     padding: 10,
     borderRadius: 10,
@@ -384,7 +385,8 @@ const styles = StyleSheet.create({
 
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    width: 150,
+    justifyContent: 'space-between',
   },
 
   buttonDisabled: {
