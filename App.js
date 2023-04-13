@@ -170,9 +170,13 @@ export default function App() {
                   <TouchableOpacity >
                     <Text style= {styles.button} onPress= {handleOpenDateModal}>Back</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity >
-                    <Text style= {date ? styles.button : styles.buttonDisabled} onPress= {date && handleOpenDateModal}>Select</Text>
-                  </TouchableOpacity>
+                  {date ?
+                    <TouchableOpacity >
+                      <Text style= {styles.button} onPress= {handleOpenDateModal}>Select</Text>
+                    </TouchableOpacity> :
+                    <Text style= {styles.buttonDisabled}>Select</Text>
+                    }
+
                 </View>
 
 
