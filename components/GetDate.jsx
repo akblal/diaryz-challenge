@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 
 const GetDate = ({ date, handleOpenDateModal}) => {
 

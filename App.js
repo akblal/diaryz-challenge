@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Modal, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView, SafeAreaView } from 'react-native';
-import Checkbox from 'expo-checkbox';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
+import { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 
 import AppTitle from './components/AppTitle.jsx';
 import GetDate from './components/GetDate.jsx';

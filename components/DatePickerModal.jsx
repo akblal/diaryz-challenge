@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Keyboard, TextInput, TouchableWithoutFeedback, Modal } from 'react-native';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Modal } from 'react-native';
+import DatePicker from 'react-native-modern-datepicker';
 
 const DatePickerModal = ({ openDateModal, date, startDate, handleChangeDate, handleOpenDateModal }) => {
 

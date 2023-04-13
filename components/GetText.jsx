@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Keyboard, TextInput, TouchableWithoutFeedback } from 'react-native';
-import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 
 const GetText = ({ date, time, text, saveReminder, handleChangeText}) => {
 
