@@ -27,7 +27,11 @@ export default function App() {
   }
 
   const handleChangeDate = (newDate) => {
-    setDate(newDate);
+    let day = newDate.substring(8);
+    let month = newDate.substring(5,7);
+    let year = newDate.substring(0,4);
+    let formatDate = (month + '/' + day + '/' + year);
+    setDate(formatDate);
   }
 
   const handleChangeTime = (newTime) => {
@@ -47,9 +51,9 @@ export default function App() {
   }
 
   const saveReminder = () => {
-    let day = date.substring(8);
-    let month = date.substring(5,7);
-    let year = date.substring(0,4);
+    let day = date.substring(3,5);
+    let month = date.substring(0,2);
+    let year = date.substring(6);
     let formatDate = (month + '/' + day + '/' + year);
     let hour = time.substring(0,2);
     let minute = time.substring(3);
@@ -102,8 +106,14 @@ export default function App() {
         <View style= {styles.userInput}>
           <View style= {date ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
             <Text>date:</Text>
-            {date ? <Text style= {styles.dateTime}>{date}</Text> : null}
-
+            {date ?
+              <View style= {styles.dateTime}>
+                <Text >{date}</Text>
+              </View> :
+              <View style={styles.dateTimeMissing}>
+                <Text></Text>
+              </View>
+            }
             <TouchableOpacity onPress= {handleOpenDateModal} style= {styles.button}>
                 <Text>Choose</Text>
             </TouchableOpacity>
@@ -111,7 +121,14 @@ export default function App() {
 
           <View style= {time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
             <Text>time:</Text>
-            {time ? <Text style= {styles.dateTime}>{time}</Text> : null}
+            {time ?
+              <View style= {styles.dateTime}>
+                <Text >{time}</Text>
+              </View> :
+              <View style={styles.dateTimeMissing}>
+                <Text></Text>
+              </View>
+            }
 
             <TouchableOpacity onPress= {handleOpenTimeModal} style= {styles.button}>
                 <Text>Choose</Text>
@@ -227,27 +244,47 @@ const styles = StyleSheet.create({
   },
 
   dateTimeContainer: {
+    // borderColor: 'black',
+    // borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
-    width: '100%'
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 10,
   },
 
   dateTimeContainerMissing: {
+    // borderColor: 'black',
+    // borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
-    width: '100%'
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 10,
   },
 
   dateTime: {
-    borderColor: 'black',
-    borderWidth: 1,
-    width: 150,
+    // borderColor: 'red',
+    // borderWidth: 1,
+    width: 70,
     height: 40,
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+  },
+
+  dateTimeMissing: {
+    // borderColor: 'red',
+    // borderWidth: 1,
+    width: 70,
+    height: 40,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
   },
 
   reminderListContainer: {
