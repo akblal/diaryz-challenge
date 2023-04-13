@@ -7,6 +7,10 @@ import DatePicker, { getToday, getFormatedDate } from 'react-native-modern-datep
 import AppTitle from './components/AppTitle.jsx';
 import GetDate from './components/GetDate.jsx';
 import GetTime from './components/GetTime.jsx';
+import GetText from './components/GetText.jsx';
+import DatePickerModal from './components/DatePickerModal.jsx';
+import TimePickerModal from './components/TimePickerModal.jsx';
+import DisplayReminders from './components/DisplayReminders.jsx';
 
 export default function App() {
 
@@ -101,102 +105,22 @@ export default function App() {
   return (
     <SafeAreaView style= {styles.container}>
       <ScrollView>
-        <AppTitle />
 
+        <AppTitle />
 
         <View style= {styles.userInput}>
           <GetDate date= {date} handleOpenDateModal= {handleOpenDateModal} />
           <GetTime time= {time} handleOpenTimeModal= {handleOpenTimeModal} />
-
-
-
-
-          <View style= {styles.centerContainer}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-              <TextInput
-                style= {styles.input}
-                onChangeText = {handleChangeText}
-                value= {text}
-                placeholder= 'what are you going to forget?'
-              />
-            </TouchableWithoutFeedback>
-          </View>
-
-          <View style= {styles.centerContainer}>
-            <TouchableOpacity onPress= {saveReminder} style= {(!date || !time || !text) ? styles.buttonDisabled : styles.button} disabled= {!date || !time || !text}>
-              <Text>Submit</Text>
-            </TouchableOpacity>
-          </View>
+          <GetText date= {date} time= {time} text= {text} saveReminder= {saveReminder} handleChangeText= {handleChangeText} />
         </View>
 
-        <Modal
-        style= {styles.modalContainer}
-        animationType= 'slide'
-        transparent= 'true'
-        visible= {openDateModal}>
-          <View style= {styles.centerView}>
-            <View style= {styles.modalView}>
-            <DatePicker
-              mode= 'calendar'
-              selected= {date}
-              minimumDate= {startDate}
-              onDateChange= {handleChangeDate}
-            />
+        <DatePickerModal openDateModal= {openDateModal} date= {date} startDate= {startDate} handleChangeDate= {handleChangeDate} handleOpenDateModal= {handleOpenDateModal} />
+        <TimePickerModal openTimeModal= {openTimeModal} handleChangeTime= {handleChangeTime}/>
 
-                <View style= {styles.buttonRow}>
-                  <TouchableOpacity >
-                    <Text style= {styles.button} onPress= {handleOpenDateModal}>Back</Text>
-                  </TouchableOpacity>
-                  {date ?
-                    <TouchableOpacity >
-                      <Text style= {styles.button} onPress= {handleOpenDateModal}>Select</Text>
-                    </TouchableOpacity> :
-                    <Text style= {styles.buttonDisabled}>Select</Text>
-                    }
-                </View>
-            </View>
-          </View>
-        </Modal>
-
-        <Modal
-        style= {styles.modalContainer}
-        animationType= 'slide'
-        transparent= 'true'
-        visible= {openTimeModal}>
-          <View style= {styles.centerView}>
-            <View style= {styles.modalView}>
-            <DatePicker
-              mode= 'time'
-              onTimeChange = {handleChangeTime}
-            />
-            </View>
-          </View>
-        </Modal>
-
-
-        <View style= {styles.reminderListContainer}>
-          <View style= {styles.reminderListTitleContainer}>
-            <Text>here are your reminders:</Text>
-          </View>
-          <View style= {styles.reminderList}>
-            {list.map((item) =>
-              <TouchableOpacity style= {item.completed ? styles.reminderCardCompleted : styles.reminderCardIncomplete} key= {item.id} onPress= {() => completeReminder(item.id)}>
-                <Checkbox
-                  value= {item.completed}
-                  onValueChange= {() => completeReminder(item.id)}
-                  style= {styles.checkbox}
-                  color= {item.completed ? 'green' : 'red'}
-                />
-                <View >
-                  <Text style= {styles.reminderDateTime}>{item.date} @ {item.time}</Text>
-                  <Text style= {styles.reminderText}>{item.text}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+        <DisplayReminders list= {list} completeReminder= {completeReminder}/>
 
         <StatusBar style="auto" />
+
       </ScrollView>
     </SafeAreaView>
 
@@ -218,180 +142,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  dateTimeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: 10,
-  },
-
-  dateTimeContainerMissing: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: 10,
-  },
-
-  dateTime: {
-    width: 70,
-    height: 40,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
-  },
-
-  dateTimeMissing: {
-    width: 70,
-    height: 40,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
-  },
-
-  reminderListContainer: {
-    flex: 5,
-    marginTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    width: '100%',
-  },
-
-  reminderListTitleContainer: {
-    width: '100%',
-  },
-
-  reminderList: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  modalContainer: {
-    height: '90%',
-  },
-
-  centerContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    marginTop: 5,
-  },
-
-  input: {
-    height: 40,
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 10,
-    width: 240,
-  },
-
-  centerView : {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    width: '90%',
-    padding: 35,
-    alignItems: 'center',
-  },
-
-  button: {
-    borderWidth: 1,
-    padding: 5,
-    borderRadius: 5,
-  },
-
-  reminderCardCompleted: {
-    flexDirection: 'row',
-    columnGap: 10,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: 'green',
-    backgroundColor: 'lightgreen',
-    width: 300,
-    padding: 10,
-    borderRadius: 8,
-  },
-
-  reminderCardIncomplete: {
-    flexDirection: 'row',
-    columnGap: 10,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: 'red',
-    backgroundColor: 'pink',
-    width: 300,
-    padding: 10,
-    borderRadius: 8,
-  },
-
-  reminderDateTime: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 5,
-  },
-
-  reminderText: {
-    fontSize: 18,
-    paddingRight: 30,
-  },
-
-  buttonRow: {
-    flexDirection: 'row',
-    width: 150,
-    justifyContent: 'space-between',
-  },
-
-  buttonDisabled: {
-    borderWidth: 1,
-    padding: 5,
-    borderRadius: 5,
-    backgroundColor: 'lightgrey',
-    opacity: 0.5
-  }
 });
-
-
-// <View style= {date ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
-//             <Text>date:</Text>
-//             {date ?
-//               <View style= {styles.dateTime}>
-//                 <Text >{date}</Text>
-//               </View> :
-//               <View style={styles.dateTimeMissing}>
-//                 <Text></Text>
-//               </View>
-//             }
-//             <TouchableOpacity onPress= {handleOpenDateModal} style= {styles.button}>
-//                 <Text>Choose</Text>
-//             </TouchableOpacity>
-//           </View>
-
-
-{/* <View style= {time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
-            <Text>time:</Text>
-            {time ?
-              <View style= {styles.dateTime}>
-                <Text >{time}</Text>
-              </View> :
-              <View style={styles.dateTimeMissing}>
-                <Text></Text>
-              </View>
-            }
-
-            <TouchableOpacity onPress= {handleOpenTimeModal} style= {styles.button}>
-                <Text>Choose</Text>
-            </TouchableOpacity>
-          </View> */}
