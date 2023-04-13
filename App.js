@@ -10,15 +10,20 @@ export default function App() {
   const startDate = getFormatedDate(todayDate.setDate(todayDate.getDate()), 'YYYY/MM/DD');
 
   const [date, setDate] = useState();
-  const [time, setTime] = useState('00:00');
+  const [time, setTime] = useState();
   const [text, setText] = useState('');
   const [completed, setCompleted] = useState(false);
-  const [openDateTimeModal, setOpenDateTimeModal] = useState(false);
+  const [openDateModal, setOpenDateModal] = useState(false);
+  const [openTimeModal, setOpenTimeModal] = useState(false);
   const [list, setList] = useState([])
   const [counter, setCounter] = useState(0);
 
-  const handleOpenDateTimeModal = () => {
-    setOpenDateTimeModal(!openDateTimeModal);
+  const handleOpenDateModal = () => {
+    setOpenDateModal(!openDateModal);
+  }
+
+  const handleOpenTimeModal = () => {
+    setOpenTimeModal(!openTimeModal);
   }
 
   const handleChangeDate = (newDate) => {
@@ -27,6 +32,7 @@ export default function App() {
 
   const handleChangeTime = (newTime) => {
     setTime(newTime);
+    handleOpenTimeModal();
   }
 
   const handleChangeText = (newText) => {
@@ -80,7 +86,7 @@ export default function App() {
     //set the list of remminders and reset all values of the reminder
     setList(copyList)
     setDate()
-    setTime('00:00')
+    setTime()
     setText('')
   }
 
@@ -94,11 +100,20 @@ export default function App() {
         </View>
 
         <View style= {styles.userInput}>
-          <View style= {date && time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
-            <Text>date/time:</Text>
-            {date && time ? <Text style= {styles.dateTime}>{date} {time}</Text> : null}
+          <View style= {date ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
+            <Text>date:</Text>
+            {date ? <Text style= {styles.dateTime}>{date}</Text> : null}
 
-            <TouchableOpacity onPress= {handleOpenDateTimeModal} style= {styles.button}>
+            <TouchableOpacity onPress= {handleOpenDateModal} style= {styles.button}>
+                <Text>Choose</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style= {time ? styles.dateTimeContainer : styles.dateTimeContainerMissing}>
+            <Text>time:</Text>
+            {time ? <Text style= {styles.dateTime}>{time}</Text> : null}
+
+            <TouchableOpacity onPress= {handleOpenTimeModal} style= {styles.button}>
                 <Text>Choose</Text>
             </TouchableOpacity>
           </View>
@@ -124,19 +139,33 @@ export default function App() {
         style= {styles.modalContainer}
         animationType= 'slide'
         transparent= 'true'
-        visible= {openDateTimeModal}>
+        visible= {openDateModal}>
           <View style= {styles.centerView}>
             <View style= {styles.modalView}>
             <DatePicker
-              mode= 'datepicker'
+              mode= 'calendar'
               selected= {date}
               minimumDate= {startDate}
               onDateChange= {handleChangeDate}
+            />
+              <TouchableOpacity onPress= {handleOpenDateModal} style= {(date && time) ? styles.button : null}>
+                {date && <Text>Select</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+        style= {styles.modalContainer}
+        animationType= 'slide'
+        transparent= 'true'
+        visible= {openTimeModal}>
+          <View style= {styles.centerView}>
+            <View style= {styles.modalView}>
+            <DatePicker
+              mode= 'time'
               onTimeChange = {handleChangeTime}
             />
-              <TouchableOpacity onPress= {handleOpenDateTimeModal} style= {(date && time) ? styles.button : null}>
-                {date && time && <Text>Select</Text>}
-              </TouchableOpacity>
             </View>
           </View>
         </Modal>
